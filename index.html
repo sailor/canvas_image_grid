@@ -1,0 +1,86 @@
+<html>
+<head>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <style>
+    html, body {
+      background-color: #f5f5f5;
+      margin: 15px;
+    }
+    #container {
+      float: left;
+    }
+    canvas {
+      position: absolute;
+      display: none;
+    }
+    #container:hover canvas {
+      display: block;
+    }
+    .clearfix {
+      clear: both;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <canvas id="mask"></canvas>
+    <img id="image" />
+  </div>
+  <div class="clearfix" />
+  <input type="file" id="files" accept="image/*" />
+
+  <script type="text/javascript">
+    function drawGrid(parts) {
+      parts = typeof parts !== 'undefined' ? parts : 3;
+
+      // Get image properties
+      var image = $('#image');
+      var height = image.height();
+      var width = image.width();
+      var position = image.position();
+
+      // Set mask position
+      var mask = $('#mask');
+      mask.attr('height', image.css('height'));
+      mask.attr('width', image.css('width'));
+      mask.css('top', position.top);
+      mask.css('left', position.left);
+
+      // Draw grid
+      var context = mask.get(0).getContext('2d');
+      context.lineWidth = 2;
+      for (i = 1; i < parts; i++) {
+        // Draw vertical lines
+        context.beginPath();
+        var x = width / parts * i;
+        context.moveTo(x, 0);
+        context.lineTo(x, height);
+        context.stroke();
+
+        // Draw horizontal lines
+        context.beginPath();
+        var y = height / parts * i;
+        context.moveTo(0, y);
+        context.lineTo(width, y);
+        context.stroke();
+      }
+    }
+
+    $(document).ready(function() {
+      $('#files').change(function(event) {
+        var files = event.target.files;
+        for (var i = 0, f; f = files[i]; i++) {
+          var reader = new FileReader();
+          reader.onload = (function(theFile) {
+            return function(e) {
+              $('#image').attr('src', e.target.result);
+              drawGrid();
+            };
+          })(f);
+          reader.readAsDataURL(f);
+        }
+      })
+    });
+  </script>
+</body>
+</html>
