@@ -49,7 +49,7 @@
       // Draw grid
       var context = mask.get(0).getContext('2d');
       context.lineWidth = 2;
-      for (i = 1; i < parts; i++) {
+      for (var i = 1; i < parts; i++) {
         // Draw vertical lines
         context.beginPath();
         var x = width / parts * i;
